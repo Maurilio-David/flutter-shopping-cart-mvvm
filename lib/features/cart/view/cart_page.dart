@@ -23,61 +23,51 @@ class CartPage extends StatelessWidget {
                     itemBuilder: (_, index) {
                       final item = cartVm.items[index];
 
-                      return Card(
-                        margin: const EdgeInsets.all(8),
-                        child: ListTile(
-                          leading: Image.network(
-                            item.product.image,
-                            width: 50,
-                            height: 50,
-                          ),
-                          title: Text(item.product.title),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'R\$ ${item.product.price.toStringAsFixed(2)}',
-                              ),
-                              Text(
-                                'Subtotal: R\$ ${item.subtotal.toStringAsFixed(2)}',
-                              ),
-                            ],
-                          ),
-                          trailing: Column(
-                            children: [
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.remove),
-                                    onPressed: () =>
-                                        cartVm.decrement(item.product),
-                                  ),
-                                  Text(item.quantity.toString()),
-                                  IconButton(
-                                    icon: const Icon(Icons.add),
-                                    onPressed: () => cartVm.add(item.product),
-                                  ),
-                                ],
-                              ),
-                              Expanded(
-                                child: IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  onPressed: () async {
-                                    await cartVm.remove(item.product);
-
-                                    if (cartVm.error != null &&
-                                        context.mounted) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(content: Text(cartVm.error!)),
-                                      );
-                                    }
-                                  },
+                      return Dismissible(
+                        key: ValueKey(item.product.id),
+                        direction: DismissDirection.endToStart,
+                        background: Container(
+                          alignment: Alignment.centerRight,
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          color: Colors.red,
+                          child: Icon(Icons.delete, color: Colors.white),
+                        ),
+                        onDismissed: (_) => cartVm.remove(item.product),
+                        child: Card(
+                          margin: const EdgeInsets.all(8),
+                          child: ListTile(
+                            leading: Image.network(
+                              item.product.image,
+                              width: 50,
+                              height: 50,
+                            ),
+                            title: Text(item.product.title),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'R\$ ${item.product.price.toStringAsFixed(2)}',
                                 ),
-                              ),
-                            ],
+                                Text(
+                                  'Subtotal: R\$ ${item.subtotal.toStringAsFixed(2)}',
+                                ),
+                              ],
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.remove),
+                                  onPressed: () =>
+                                      cartVm.decrement(item.product),
+                                ),
+                                Text(item.quantity.toString()),
+                                IconButton(
+                                  icon: const Icon(Icons.add),
+                                  onPressed: () => cartVm.add(item.product),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
