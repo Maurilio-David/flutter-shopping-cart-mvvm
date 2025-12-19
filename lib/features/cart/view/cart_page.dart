@@ -15,67 +15,80 @@ class CartPage extends StatelessWidget {
       appBar: AppBar(title: const Text('Carrinho')),
       body: cartVm.items.isEmpty
           ? const Center(child: Text('Carrinho vazio'))
-          : Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: cartVm.items.length,
-                    itemBuilder: (_, index) {
-                      final item = cartVm.items[index];
+          : SafeArea(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: cartVm.items.length,
+                      itemBuilder: (_, index) {
+                        final item = cartVm.items[index];
 
-                      return Dismissible(
-                        key: ValueKey(item.product.id),
-                        direction: DismissDirection.endToStart,
-                        background: Container(
-                          alignment: Alignment.centerRight,
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          color: Colors.red,
-                          child: Icon(Icons.delete, color: Colors.white),
-                        ),
-                        onDismissed: (_) => cartVm.remove(item.product),
-                        child: Card(
-                          margin: const EdgeInsets.all(8),
-                          child: ListTile(
-                            leading: Image.network(
-                              item.product.image,
-                              width: 50,
-                              height: 50,
-                            ),
-                            title: Text(item.product.title),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'R\$ ${item.product.price.toStringAsFixed(2)}',
-                                ),
-                                Text(
-                                  'Subtotal: R\$ ${item.subtotal.toStringAsFixed(2)}',
-                                ),
-                              ],
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.remove),
-                                  onPressed: () =>
-                                      cartVm.decrement(item.product),
-                                ),
-                                Text(item.quantity.toString()),
-                                IconButton(
-                                  icon: const Icon(Icons.add),
-                                  onPressed: () => cartVm.add(item.product),
-                                ),
-                              ],
+                        return Dismissible(
+                          key: ValueKey(item.product.id),
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            alignment: Alignment.centerRight,
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            color: Colors.red,
+                            child: Icon(Icons.delete, color: Colors.white),
+                          ),
+                          onDismissed: (_) async {
+                            await cartVm.remove(item.product);
+
+                            final command = cartVm.removeCommand;
+
+                            if (command.hasError && context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(command.error!)),
+                              );
+                              command.reset();
+                            }
+                          },
+                          child: Card(
+                            margin: const EdgeInsets.all(8),
+                            child: ListTile(
+                              leading: Image.network(
+                                item.product.image,
+                                width: 50,
+                                height: 50,
+                              ),
+                              title: Text(item.product.title),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'R\$ ${item.product.price.toStringAsFixed(2)}',
+                                  ),
+                                  Text(
+                                    'Subtotal: R\$ ${item.subtotal.toStringAsFixed(2)}',
+                                  ),
+                                ],
+                              ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.remove),
+                                    onPressed: () =>
+                                        cartVm.decrement(item.product),
+                                  ),
+                                  Text(item.quantity.toString()),
+                                  IconButton(
+                                    icon: const Icon(Icons.add),
+                                    onPressed: () => cartVm.add(item.product),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
-                ),
-                const CartSummary(),
-              ],
+                  const CartSummary(),
+                ],
+              ),
             ),
     );
   }

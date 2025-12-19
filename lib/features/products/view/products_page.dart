@@ -43,28 +43,30 @@ class ProductsPage extends StatelessWidget {
         ],
       ),
 
-      body: Builder(
-        builder: (_) {
-          if (producsVm.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (producsVm.error != null) {
-            return Center(
-              child: Text(
-                producsVm.error!,
-                style: const TextStyle(color: Colors.red),
-              ),
-            );
-          }
+      body: SafeArea(
+        child: Builder(
+          builder: (_) {
+            if (producsVm.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (producsVm.error != null) {
+              return Center(
+                child: Text(
+                  producsVm.error!,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              );
+            }
 
-          return ListView.builder(
-            itemCount: producsVm.products.length,
-            itemBuilder: (_, index) {
-              final product = producsVm.products[index];
-              return _ProductTile(product: product);
-            },
-          );
-        },
+            return ListView.builder(
+              itemCount: producsVm.products.length,
+              itemBuilder: (_, index) {
+                final product = producsVm.products[index];
+                return _ProductTile(product: product);
+              },
+            );
+          },
+        ),
       ),
     );
   }

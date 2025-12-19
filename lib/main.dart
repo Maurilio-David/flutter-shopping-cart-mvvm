@@ -1,5 +1,7 @@
 import 'package:desafio_tenda/app/app_widget.dart';
 import 'package:desafio_tenda/features/cart/viewmodel/cart_view_model.dart';
+import 'package:desafio_tenda/features/checkkout/data/services/checkout_api.dart';
+import 'package:desafio_tenda/features/checkkout/viewmodel/checkout_view_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +17,7 @@ void main() {
         ChangeNotifierProvider(
           create: (_) => ProductsViewModel(ProductsApi(Dio()))..loadProducts(),
         ),
+        ChangeNotifierProvider(create: (_) => CheckoutViewModel(CheckoutApi())),
       ],
       child: const AppWidget(),
     ),

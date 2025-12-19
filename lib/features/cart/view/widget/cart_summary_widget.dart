@@ -1,4 +1,6 @@
+import 'package:desafio_tenda/app/routes.dart';
 import 'package:desafio_tenda/features/cart/viewmodel/cart_view_model.dart';
+import 'package:desafio_tenda/features/checkkout/viewmodel/checkout_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,6 +10,7 @@ class CartSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartVm = context.watch<CartViewModel>();
+    final checkoutVm = context.watch<CheckoutViewModel>();
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -23,8 +26,32 @@ class CartSummary extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           ElevatedButton(
-            onPressed: () {},
-            child: const Text('Finalizar Pedido'),
+            onPressed: checkoutVm.checkoutCommand.isRunning
+                ? null
+                : () async {
+                    await checkoutVm.checkout();
+
+                    if (checkoutVm.checkoutCommand.isSuccess &&
+                        context.mounted) {
+                      Navigator.pushReplacementNamed(
+                        context,
+                        AppRoutes.success,
+                      );
+                      checkoutVm.checkoutCommand.reset();
+                    }
+
+                    if (checkoutVm.checkoutCommand.hasError &&
+                        context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(checkoutVm.checkoutCommand.error!),
+                        ),
+                      );
+                    }
+                  },
+            child: checkoutVm.checkoutCommand.isRunning
+                ? const CircularProgressIndicator()
+                : const Text('Finalizar Pedido'),
           ),
         ],
       ),
