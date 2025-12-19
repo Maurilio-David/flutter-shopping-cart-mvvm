@@ -1,9 +1,14 @@
 import 'package:desafio_tenda/core/errors/app_exception.dart';
+import 'package:desafio_tenda/features/cart/data/services/cart_api.dart';
 import 'package:desafio_tenda/features/cart/domain/cart_item.dart';
 import 'package:desafio_tenda/features/products/domain/product.dart';
 import 'package:flutter/material.dart';
 
 class CartViewModel extends ChangeNotifier {
+  final CartApi _api = CartApi();
+  bool isLoading = false;
+  String? error;
+
   static const maxDifferentItems = 10;
 
   final Map<int, CartItem> _items = {};
@@ -50,5 +55,21 @@ class CartViewModel extends ChangeNotifier {
   void clear() {
     _items.clear();
     notifyListeners();
+  }
+
+  Future<void> remove(Product product) async {
+    isLoading = true;
+    error = null;
+    notifyListeners();
+
+    try {
+      await _api.removeItem(product.id);
+      _items.remove(product.id);
+    } catch (e) {
+      error = e.toString();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 }

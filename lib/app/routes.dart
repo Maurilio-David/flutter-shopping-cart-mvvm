@@ -1,3 +1,4 @@
+import 'package:desafio_tenda/features/cart/view/cart_page.dart';
 import 'package:desafio_tenda/features/products/view/products_page.dart';
 import 'package:flutter/material.dart';
 
@@ -8,7 +9,7 @@ class AppRoutes {
 
   static Map<String, WidgetBuilder> get routes => {
     products: (_) => const ProductsPage(),
-    cart: (_) => const Placeholder(),
+    cart: (_) => const CartPage(),
     success: (_) => const Placeholder(),
   };
 }

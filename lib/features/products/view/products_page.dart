@@ -1,3 +1,4 @@
+import 'package:desafio_tenda/app/routes.dart';
 import 'package:desafio_tenda/features/cart/viewmodel/cart_view_model.dart';
 import 'package:desafio_tenda/features/products/domain/product.dart';
 import 'package:desafio_tenda/features/products/viewmodel/products_view_model.dart';
@@ -20,7 +21,9 @@ class ProductsPage extends StatelessWidget {
             children: [
               IconButton(
                 icon: const Icon(Icons.shopping_cart),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.cart);
+                },
               ),
               if (cartVm.totalItems > 0)
                 Positioned(
